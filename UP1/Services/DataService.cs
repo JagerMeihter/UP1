@@ -12,6 +12,8 @@ namespace UP1.Services
         private static readonly string UsersFile = "Data/users.json";
         private static readonly string UserListsFile = "Data/userlists.json";
         private static readonly string ComplaintsFile = "Data/complaints.json";
+        private static readonly string ReviewsFile = "Data/reviews.json";
+        public List<Review> Reviews { get; private set; } = new List<Review>();
         public List<Complaint> Complaints { get; private set; } = new List<Complaint>();
         public List<Book> Books { get; private set; }
         public List<User> Users { get; private set; }
@@ -75,13 +77,31 @@ namespace UP1.Services
                 Complaints = new List<Complaint>();
                 SaveComplaints();
             }
+
+            if (File.Exists(ReviewsFile))
+            {
+                var json = File.ReadAllText(ReviewsFile);
+                Reviews = JsonConvert.DeserializeObject<List<Review>>(json) ?? new List<Review>();
+            }
+            else
+            {
+                Reviews = new List<Review>();
+                SaveReviews();
+            }
         }
 
         public void SaveBooks() => File.WriteAllText(BooksFile, JsonConvert.SerializeObject(Books, Formatting.Indented));
         public void SaveUsers() => File.WriteAllText(UsersFile, JsonConvert.SerializeObject(Users, Formatting.Indented));
         public void SaveUserLists() => File.WriteAllText(UserListsFile, JsonConvert.SerializeObject(UserLists, Formatting.Indented));
         public void SaveComplaints() => File.WriteAllText(ComplaintsFile, JsonConvert.SerializeObject(Complaints, Formatting.Indented));
+        public void SaveReviews() => File.WriteAllText(ReviewsFile, JsonConvert.SerializeObject(Reviews, Formatting.Indented));
 
+
+        // Получить отзывы для книги
+        public List<Review> GetReviewsForBook(int bookId)
+        {
+            return Reviews.Where(r => r.BookId == bookId).OrderByDescending(r => r.Date).ToList();
+        }
         // Получить книги пользователя на определённой полке
         public List<Book> GetBooksOnShelf(int userId, string shelf)
         {
