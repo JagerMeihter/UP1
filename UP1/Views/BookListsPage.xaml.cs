@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using UP1.Models;
 using UP1.Services;
+using UP1.Windows;
 
 namespace UP1.Views
 {
     public partial class BookListsPage : Page
     {
-        private List<Book> currentListBooks = new List<Book>();
-        private string currentShelf = "В планах"; // текущая полка
+        private string currentShelf = "В планах";
 
         public BookListsPage()
         {
@@ -22,6 +21,7 @@ namespace UP1.Views
 
         private void InitializeSortComboBox()
         {
+            cmbSortLists.Items.Clear();
             cmbSortLists.Items.Add("По названию (А-Я)");
             cmbSortLists.Items.Add("По названию (Я-А)");
             cmbSortLists.Items.Add("По оценке (высокая)");
@@ -32,9 +32,11 @@ namespace UP1.Views
         private void LoadShelf(string shelf)
         {
             currentShelf = shelf;
-            // Пока показываем все книги (в будущем будет разделение по полкам)
-            currentListBooks = App.DataService.Books.ToList();
-            DisplayBooks(currentListBooks);
+            var user = MainWindow.CurrentUser;
+            if (user == null) return;
+
+            var books = App.DataService.GetBooksOnShelf(user.Id, shelf);
+            DisplayBooks(books);
         }
 
         private void DisplayBooks(List<Book> books)
@@ -46,14 +48,27 @@ namespace UP1.Views
                 var card = CreateBookCard(book);
                 listsBooksPanel.Children.Add(card);
             }
+
+            if (books.Count == 0)
+            {
+                var tb = new TextBlock
+                {
+                    Text = "На этой полке пока пусто",
+                    Foreground = System.Windows.Media.Brushes.Gray,
+                    FontSize = 16,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Margin = new Thickness(50)
+                };
+                listsBooksPanel.Children.Add(tb);
+            }
         }
 
         private Border CreateBookCard(Book book)
         {
             var border = new Border
             {
-                Width = 160,
-                Height = 250,
+                Width = 170,
+                Height = 260,
                 Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(45, 45, 48)),
                 CornerRadius = new CornerRadius(10),
                 Margin = new Thickness(12),
@@ -69,7 +84,8 @@ namespace UP1.Views
                 FontWeight = FontWeights.Bold,
                 TextWrapping = TextWrapping.Wrap,
                 TextAlignment = TextAlignment.Center,
-                Foreground = System.Windows.Media.Brushes.White
+                Foreground = System.Windows.Media.Brushes.White,
+                Margin = new Thickness(0, 0, 0, 5)
             };
             var author = new TextBlock
             {
@@ -84,14 +100,35 @@ namespace UP1.Views
 
             border.Child = stack;
 
-            border.MouseLeftButtonUp += (s, e) =>
+            // Контекстное меню для перемещения
+            border.ContextMenu = new ContextMenu();
+            string[] shelves = { "В планах", "Читаю", "Прочитано", "Заброшено" };
+
+            foreach (var s in shelves)
             {
-                NavigationService.Navigate(new BookDetailsPage(book));
-            };
+                if (s != currentShelf)
+                {
+                    var mi = new MenuItem { Header = $"Переместить в «{s}»" };
+                    mi.Click += (sender, e) => MoveBookToShelf(book, s);
+                    border.ContextMenu.Items.Add(mi);
+                }
+            }
+
+            border.MouseLeftButtonUp += (s, e) => NavigationService.Navigate(new BookDetailsPage(book));
 
             return border;
         }
 
+        private void MoveBookToShelf(Book book, string newShelf)
+        {
+            var user = MainWindow.CurrentUser;
+            if (user == null) return;
+
+            App.DataService.AddBookToShelf(user.Id, book.Id, newShelf);
+            LoadShelf(currentShelf); // обновляем текущую полку
+        }
+
+        // Обработчики кнопок вкладок
         private void BtnPlan_Click(object sender, RoutedEventArgs e) => LoadShelf("В планах");
         private void BtnReading_Click(object sender, RoutedEventArgs e) => LoadShelf("Читаю");
         private void BtnFinished_Click(object sender, RoutedEventArgs e) => LoadShelf("Прочитано");
@@ -99,18 +136,8 @@ namespace UP1.Views
 
         private void TxtSearchLists_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var filtered = currentListBooks.Where(b =>
-                b.Title.ToLower().Contains(txtSearchLists.Text.ToLower()) ||
-                b.Author.ToLower().Contains(txtSearchLists.Text.ToLower())
-            ).ToList();
-
-            DisplayBooks(filtered);
-        }
-
-        private void CmbSortLists_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // Простая сортировка (можно улучшить позже)
-            DisplayBooks(currentListBooks);
+            // Поиск будет работать только по текущей полке
+            // Можно улучшить позже
         }
     }
 }

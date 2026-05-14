@@ -75,6 +75,7 @@
     </Compile>
     <Compile Include="Models\Book.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserBookList.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Views\AddBookWindow.xaml.cs">
       <DependentUpon>AddBookWindow.xaml</DependentUpon>
