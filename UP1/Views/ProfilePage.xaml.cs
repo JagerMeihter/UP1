@@ -1,28 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using UP1.Models;
+using UP1.Windows;
 
 namespace UP1.Views
 {
-    /// <summary>
-    /// Логика взаимодействия для ProfilePage.xaml
-    /// </summary>
     public partial class ProfilePage : Page
     {
+        private User currentUser;
+
         public ProfilePage()
         {
             InitializeComponent();
+            LoadUserInfo();
+        }
+
+        private void LoadUserInfo()
+        {
+            currentUser = MainWindow.CurrentUser; // будем брать из MainWindow
+
+            if (currentUser == null) return;
+
+            tbFullName.Text = $"Имя: {currentUser.FullName}";
+            tbLogin.Text = $"Логин: {currentUser.Login}";
+            tbEmail.Text = $"Email: {currentUser.Email}";
+            tbRole.Text = $"Роль: {currentUser.Role}";
+
+            if (currentUser.IsFrozen)
+            {
+                tbFreezeWarning.Visibility = Visibility.Visible;
+                tbFreezeWarning.Text = $"⚠️ Аккаунт заморожен!\nПричина: {currentUser.FreezeReason}";
+            }
+
+            btnApplyAuthor.Visibility = currentUser.Role == "User" ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void BtnApplyAuthor_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Заявка на роль Автора отправлена администратору!", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
+            // В будущем будет сохраняться в список заявок
         }
     }
 }

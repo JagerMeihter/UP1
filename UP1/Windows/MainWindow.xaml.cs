@@ -1,55 +1,70 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using UP1.Models;
+using UP1.Views;
 
 namespace UP1.Windows
 {
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public static User CurrentUser { get; private set; }
+
+        public MainWindow(User user)
         {
             InitializeComponent();
+            CurrentUser = user;
+            ApplyRoleVisibility();
             LoadDefaultPage();
+        }
+
+        private void ApplyRoleVisibility()
+        {
+            if (CurrentUser == null) return;
+
+            btnAuthor.Visibility = CurrentUser.Role == "Author" || CurrentUser.Role == "Administrator" ? Visibility.Visible : Visibility.Collapsed;
+            btnAdmin.Visibility = CurrentUser.Role == "Administrator" ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void LoadDefaultPage()
         {
-            // По умолчанию открываем Каталог книг
-            ContentFrame.Navigate(new Views.BookCatalogPage());
+            ContentFrame.Navigate(new BookCatalogPage());
+            tbPageTitle.Text = "Каталог книг";
         }
 
+        // Остальные методы (BtnCatalog_Click, BtnLists_Click и т.д.) оставляем как были
         private void BtnCatalog_Click(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(new Views.BookCatalogPage());
+            ContentFrame.Navigate(new BookCatalogPage());
             tbPageTitle.Text = "Каталог книг";
         }
 
         private void BtnLists_Click(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(new Views.BookListsPage());
+            ContentFrame.Navigate(new BookListsPage());
             tbPageTitle.Text = "Мои списки книг";
         }
 
         private void BtnAuthor_Click(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(new Views.AuthorPage());
+            ContentFrame.Navigate(new AuthorPage()); // создадим позже
             tbPageTitle.Text = "Страница автора";
         }
 
         private void BtnAdmin_Click(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(new Views.AdminPage());
+            ContentFrame.Navigate(new AdminPage()); // создадим позже
             tbPageTitle.Text = "Администрирование";
         }
 
         private void BtnProfile_Click(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(new Views.ProfilePage());
+            ContentFrame.Navigate(new ProfilePage());
             tbPageTitle.Text = "Профиль";
         }
 
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Выйти из аккаунта?", "Выход", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Выйти из аккаунта?", "Выход", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 LoginWindow login = new LoginWindow();
                 login.Show();
