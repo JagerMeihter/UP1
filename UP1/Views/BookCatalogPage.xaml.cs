@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using UP1.Models;
 using UP1.Services;
+using UP1.Windows;
 
 namespace UP1.Views
 {
@@ -39,8 +40,8 @@ namespace UP1.Views
         {
             var border = new Border
             {
-                Width = 160,
-                Height = 260,
+                Width = 170,
+                Height = 280,
                 Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(45, 45, 48)),
                 CornerRadius = new CornerRadius(10),
                 Margin = new Thickness(12),
@@ -64,8 +65,8 @@ namespace UP1.Views
                 TextWrapping = TextWrapping.Wrap,
                 TextAlignment = TextAlignment.Center,
                 Foreground = System.Windows.Media.Brushes.White,
-                Margin = new Thickness(0, 0, 0, 4),
-                Height = 50
+                Margin = new Thickness(0, 0, 0, 5),
+                Height = 48
             };
 
             var author = new TextBlock
@@ -73,28 +74,44 @@ namespace UP1.Views
                 Text = book.Author,
                 TextAlignment = TextAlignment.Center,
                 Foreground = System.Windows.Media.Brushes.LightGray,
-                Margin = new Thickness(0, 0, 0, 8)
+                Margin = new Thickness(0, 0, 0, 10)
             };
 
             var rating = new TextBlock
             {
                 Text = $"⭐ {book.Rating}",
                 Foreground = System.Windows.Media.Brushes.Gold,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                FontSize = 15
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            var addButton = new Button
+            {
+                Content = "➕ В список",
+                Height = 30,
+                Margin = new Thickness(0, 8, 0, 0),
+                Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(33, 150, 243)),
+                Foreground = System.Windows.Media.Brushes.White
             };
 
             stack.Children.Add(cover);
             stack.Children.Add(title);
             stack.Children.Add(author);
             stack.Children.Add(rating);
+            stack.Children.Add(addButton);
 
             border.Child = stack;
 
-            // Открытие книги по клику
+            // Клик по всей карточке — открыть книгу
             border.MouseLeftButtonUp += (s, e) =>
             {
-                NavigationService.Navigate(new BookDetailsPage(book));
+                if (s != addButton) // чтобы кнопка не конфликтовала
+                    NavigationService.Navigate(new BookDetailsPage(book));
+            };
+
+            // Клик по кнопке "В список"
+            addButton.Click += (s, e) =>
+            {
+                ShowAddToShelfMenu(book);
             };
 
             return border;
@@ -136,6 +153,28 @@ namespace UP1.Views
             }
 
             DisplayBooks(sorted);
+        }
+        private void ShowAddToShelfMenu(Book book)
+        {
+            var user = MainWindow.CurrentUser;
+            if (user == null) return;
+
+            var menu = new ContextMenu();
+
+            string[] shelves = { "В планах", "Читаю", "Прочитано", "Заброшено" };
+
+            foreach (var shelf in shelves)
+            {
+                var item = new MenuItem { Header = shelf };
+                item.Click += (s, e) =>
+                {
+                    App.DataService.AddBookToShelf(user.Id, book.Id, shelf);
+                    MessageBox.Show($"Книга «{book.Title}» добавлена в «{shelf}»", "Успешно");
+                };
+                menu.Items.Add(item);
+            }
+
+            menu.IsOpen = true;
         }
     }
 }
