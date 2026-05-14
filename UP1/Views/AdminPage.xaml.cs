@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace UP1.Views
 {
@@ -8,5 +9,7 @@ namespace UP1.Views
         {
             InitializeComponent();
         }
+        
     }
+
 }

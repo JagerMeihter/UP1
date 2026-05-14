@@ -72,7 +72,11 @@ namespace UP1.Views
 
         private void BtnAddNewBook_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Форма добавления новой книги будет реализована на следующем этапе.", "Добавить книгу");
+            var addWindow = new AddBookWindow();
+            if (addWindow.ShowDialog() == true)
+            {
+                LoadAuthorBooks(); // обновляем список после добавления
+            }
         }
     }
 }
