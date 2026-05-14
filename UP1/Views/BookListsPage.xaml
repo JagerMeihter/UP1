@@ -23,10 +23,12 @@
         </StackPanel>
 
         <!-- Поиск и сортировка -->
+
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,15">
             <TextBox x:Name="txtSearchLists" Width="250" Height="35" Margin="0,0,10,0"
-                     TextChanged="TxtSearchLists_TextChanged"/>
-            <ComboBox x:Name="cmbSortLists" Width="160" Height="35" SelectionChanged="CmbSortLists_SelectionChanged"/>
+             Background="#3C3C3C" Foreground="White"/>
+
+            <ComboBox x:Name="cmbSortLists" Width="160" Height="35"/>
         </StackPanel>
 
         <!-- Сетка книг -->

@@ -114,7 +114,10 @@ namespace UP1.Views
                 }
             }
 
-            border.MouseLeftButtonUp += (s, e) => NavigationService.Navigate(new BookDetailsPage(book));
+            border.MouseLeftButtonUp += (s, e) =>
+            {
+                NavigationService.Navigate(new BookDetailsPage(book));
+            };
 
             return border;
         }
@@ -128,16 +131,15 @@ namespace UP1.Views
             LoadShelf(currentShelf); // обновляем текущую полку
         }
 
-        // Обработчики кнопок вкладок
+        // Кнопки вкладок
         private void BtnPlan_Click(object sender, RoutedEventArgs e) => LoadShelf("В планах");
         private void BtnReading_Click(object sender, RoutedEventArgs e) => LoadShelf("Читаю");
         private void BtnFinished_Click(object sender, RoutedEventArgs e) => LoadShelf("Прочитано");
         private void BtnDropped_Click(object sender, RoutedEventArgs e) => LoadShelf("Заброшено");
 
-        private void TxtSearchLists_TextChanged(object sender, TextChangedEventArgs e)
+        private void CmbSortLists_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Поиск будет работать только по текущей полке
-            // Можно улучшить позже
+            // Заглушка на будущее
         }
     }
 }
