@@ -19,10 +19,11 @@ namespace UP1.Windows
 
         private void ApplyRoleVisibility()
         {
-            if (CurrentUser == null) return;
+            btnAuthor.Visibility = (CurrentUser.Role == "Author" || CurrentUser.Role == "Administrator")
+                                 ? Visibility.Visible : Visibility.Collapsed;
 
-            btnAuthor.Visibility = CurrentUser.Role == "Author" || CurrentUser.Role == "Administrator" ? Visibility.Visible : Visibility.Collapsed;
-            btnAdmin.Visibility = CurrentUser.Role == "Administrator" ? Visibility.Visible : Visibility.Collapsed;
+            btnAdmin.Visibility = CurrentUser.Role == "Administrator"
+                                ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void LoadDefaultPage()
@@ -31,7 +32,6 @@ namespace UP1.Windows
             tbPageTitle.Text = "Каталог книг";
         }
 
-        // Остальные методы (BtnCatalog_Click, BtnLists_Click и т.д.) оставляем как были
         private void BtnCatalog_Click(object sender, RoutedEventArgs e)
         {
             ContentFrame.Navigate(new BookCatalogPage());
@@ -46,13 +46,13 @@ namespace UP1.Windows
 
         private void BtnAuthor_Click(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(new AuthorPage()); // создадим позже
+            ContentFrame.Navigate(new AuthorPage());
             tbPageTitle.Text = "Страница автора";
         }
 
         private void BtnAdmin_Click(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(new AdminPage()); // создадим позже
+            ContentFrame.Navigate(new AdminPage());
             tbPageTitle.Text = "Администрирование";
         }
 
@@ -64,7 +64,7 @@ namespace UP1.Windows
 
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Выйти из аккаунта?", "Выход", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Выйти из аккаунта?", "Выход", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 LoginWindow login = new LoginWindow();
                 login.Show();
