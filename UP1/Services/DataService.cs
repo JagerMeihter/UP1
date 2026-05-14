@@ -11,7 +11,8 @@ namespace UP1.Services
         private static readonly string BooksFile = "Data/books.json";
         private static readonly string UsersFile = "Data/users.json";
         private static readonly string UserListsFile = "Data/userlists.json";
-
+        private static readonly string ComplaintsFile = "Data/complaints.json";
+        public List<Complaint> Complaints { get; private set; } = new List<Complaint>();
         public List<Book> Books { get; private set; }
         public List<User> Users { get; private set; }
         public List<UserBookList> UserLists { get; private set; } = new List<UserBookList>();
@@ -62,11 +63,24 @@ namespace UP1.Services
                 UserLists = new List<UserBookList>();
                 SaveUserLists();
             }
+
+
+            if (File.Exists(ComplaintsFile))
+            {
+                var json = File.ReadAllText(ComplaintsFile);
+                Complaints = JsonConvert.DeserializeObject<List<Complaint>>(json) ?? new List<Complaint>();
+            }
+            else
+            {
+                Complaints = new List<Complaint>();
+                SaveComplaints();
+            }
         }
 
         public void SaveBooks() => File.WriteAllText(BooksFile, JsonConvert.SerializeObject(Books, Formatting.Indented));
         public void SaveUsers() => File.WriteAllText(UsersFile, JsonConvert.SerializeObject(Users, Formatting.Indented));
         public void SaveUserLists() => File.WriteAllText(UserListsFile, JsonConvert.SerializeObject(UserLists, Formatting.Indented));
+        public void SaveComplaints() => File.WriteAllText(ComplaintsFile, JsonConvert.SerializeObject(Complaints, Formatting.Indented));
 
         // Получить книги пользователя на определённой полке
         public List<Book> GetBooksOnShelf(int userId, string shelf)
@@ -78,7 +92,26 @@ namespace UP1.Services
 
             return Books.Where(b => bookIds.Contains(b.Id)).ToList();
         }
-
+        public void FreezeUser(int userId, string reason)
+        {
+            var user = Users.FirstOrDefault(u => u.Id == userId);
+            if (user != null)
+            {
+                user.IsFrozen = true;
+                user.FreezeReason = reason;
+                SaveUsers();
+            }
+        }
+        public void UnfreezeUser(int userId)
+        {
+            var user = Users.FirstOrDefault(u => u.Id == userId);
+            if (user != null)
+            {
+                user.IsFrozen = false;
+                user.FreezeReason = null;
+                SaveUsers();
+            }
+        }
         // Добавить/переместить книгу на полку
         public void AddBookToShelf(int userId, int bookId, string shelf)
         {
