@@ -30,8 +30,8 @@
                 <ComboBoxItem Content="По оценке (низкая)"/>
             </ComboBox>
 
-            <TextBlock Text="Жанры:" Foreground="#AAAAAA" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <!-- Жанры добавим позже -->
+            <TextBlock Text="Жанры:" Foreground="#AAAAAA" VerticalAlignment="Center" Margin="15,0,8,0"/>
+            <StackPanel x:Name="genresPanel" Orientation="Horizontal"/>
         </StackPanel>
 
         <!-- Сетка книг -->

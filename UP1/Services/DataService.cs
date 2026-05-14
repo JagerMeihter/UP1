@@ -99,41 +99,41 @@ namespace UP1.Services
         private List<Book> GetSampleBooks()
         {
             return new List<Book>
-            {
-                new Book
-                {
-                    Id = 1,
-                    Title = "Тени прошлого",
-                    Author = "Анна Смирнова",
-                    Rating = 4.8,
-                    Genre = "Фантастика",
-                    Cover = "📖",
-                    Description = "Увлекательная история о тайнах, скрытых в прошлом...",
-                    Text = "Глава 1. Темная ночь опустилась на город...\n\nПолный текст книги здесь."
-                },
-                new Book
-                {
-                    Id = 2,
-                    Title = "Последний рассвет",
-                    Author = "Дмитрий Волков",
-                    Rating = 4.5,
-                    Genre = "Детектив",
-                    Cover = "🔍",
-                    Description = "Классический детектив с неожиданной развязкой.",
-                    Text = "Текст книги..."
-                },
-                new Book
-                {
-                    Id = 3,
-                    Title = "Сердце в огне",
-                    Author = "Мария Лебедева",
-                    Rating = 4.9,
-                    Genre = "Романтика",
-                    Cover = "❤️",
-                    Description = "Страстная история любви и преодоления.",
-                    Text = "Текст книги..."
-                }
-            };
+    {
+        new Book
+        {
+            Id = 1,
+            Title = "Тени прошлого",
+            Author = "Анна Смирнова",
+            Rating = 4.8,
+            Cover = "📖",
+            Description = "Увлекательная история о тайнах...",
+            Text = "Глава 1...",
+            Genres = new List<string> { "Фантастика", "Мистика" }
+        },
+        new Book
+        {
+            Id = 2,
+            Title = "Последний рассвет",
+            Author = "Дмитрий Волков",
+            Rating = 4.5,
+            Cover = "🔍",
+            Description = "Детективный триллер...",
+            Text = "Текст...",
+            Genres = new List<string> { "Детектив", "Триллер" }
+        },
+        new Book
+        {
+            Id = 3,
+            Title = "Сердце в огне",
+            Author = "Мария Лебедева",
+            Rating = 4.9,
+            Cover = "❤️",
+            Description = "Романтическая история...",
+            Text = "Текст...",
+            Genres = new List<string> { "Романтика", "Драма" }
+        }
+    };
         }
 
         private List<User> GetSampleUsers()

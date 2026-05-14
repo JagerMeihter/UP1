@@ -17,5 +17,6 @@ namespace UP1.Models
         public string Cover { get; set; }           // эмодзи или путь к картинке
         public string Text { get; set; }            // текст книги для чтения
         public int AuthorId { get; set; }
+        public List<string> Genres { get; set; } = new List<string>();
     }
 }
