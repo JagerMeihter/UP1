@@ -14,24 +14,32 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Панель поиска и фильтров -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
-            <TextBox x:Name="txtSearch" Width="300" Height="35" 
-                     TextChanged="TxtSearch_TextChanged"
-                     Background="#3C3C3C" Foreground="White" 
-                     BorderBrush="#555555" Margin="0,0,15,0"
-                     VerticalContentAlignment="Center"/>
 
-            <ComboBox x:Name="cmbSort" Width="180" Height="35" SelectionChanged="CmbSort_SelectionChanged"
-                      Background="#3C3C3C" Foreground="White" Margin="0,0,15,0">
-                <ComboBoxItem Content="По названию (А-Я)" IsSelected="True"/>
-                <ComboBoxItem Content="По названию (Я-А)"/>
-                <ComboBoxItem Content="По оценке (высокая)"/>
-                <ComboBoxItem Content="По оценке (низкая)"/>
-            </ComboBox>
+        <!-- Панель поиска, сортировки и фильтров -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,15">
+            <StackPanel Orientation="Horizontal">
+                <!-- Поиск -->
+                <TextBox x:Name="txtSearch" Width="320" Height="38" 
+                 TextChanged="TxtSearch_TextChanged"
+                 Background="#3C3C3C" Foreground="White" 
+                 BorderBrush="#555555" Margin="0,0,15,0"
+                 VerticalContentAlignment="Center"
+                 FontSize="14"/>
 
-            <TextBlock Text="Жанры:" Foreground="#AAAAAA" VerticalAlignment="Center" Margin="15,0,8,0"/>
-            <StackPanel x:Name="genresPanel" Orientation="Horizontal"/>
+                <!-- Сортировка -->
+                <ComboBox x:Name="cmbSort" Width="200" Height="38" 
+                  SelectionChanged="CmbSort_SelectionChanged"
+                  Background="#3C3C3C" Foreground="White" Margin="0,0,15,0">
+                    <ComboBoxItem Content="По названию (А-Я)" IsSelected="True"/>
+                    <ComboBoxItem Content="По названию (Я-А)"/>
+                    <ComboBoxItem Content="По оценке (высокая)"/>
+                    <ComboBoxItem Content="По оценке (низкая)"/>
+                </ComboBox>
+
+                <!-- Фильтры по жанрам -->
+                <TextBlock Text="Жанры:" Foreground="#AAAAAA" VerticalAlignment="Center" Margin="10,0,8,0" FontSize="14"/>
+                <StackPanel x:Name="genresPanel" Orientation="Horizontal"/>
+            </StackPanel>
         </StackPanel>
 
         <!-- Сетка книг -->
