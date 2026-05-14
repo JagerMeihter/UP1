@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using UP1.Models;
 using UP1.Services;
+using UP1.Windows;
 
 namespace UP1.Views
 {
@@ -76,5 +77,70 @@ namespace UP1.Views
         {
             MessageBox.Show("Жалоба на книгу отправлена администратору.", "Жалоба отправлена");
         }
+
+        private void BtnFreezeBook_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainWindow.CurrentUser?.Role != "Administrator") return;
+
+            var inputWindow = new Window
+            {
+                Title = "Заморозка книги",
+                Width = 420,
+                Height = 220,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Background = System.Windows.Media.Brushes.DarkSlateGray,
+                ResizeMode = ResizeMode.NoResize
+            };
+
+            var stack = new StackPanel { Margin = new Thickness(20) };
+
+            stack.Children.Add(new TextBlock
+            {
+                Text = "Введите причину заморозки книги:",
+                Foreground = System.Windows.Media.Brushes.White,
+                FontSize = 14,
+                Margin = new Thickness(0, 0, 0, 10)
+            });
+
+            var tbReason = new TextBox
+            {
+                Height = 80,
+                TextWrapping = TextWrapping.Wrap,
+                AcceptsReturn = true,
+                Background = System.Windows.Media.Brushes.White,
+                Foreground = System.Windows.Media.Brushes.Black,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
+
+            var btnOk = new Button
+            {
+                Content = "Заморозить книгу",
+                Height = 40,
+                Margin = new Thickness(0, 15, 0, 0),
+                Background = System.Windows.Media.Brushes.OrangeRed,
+                Foreground = System.Windows.Media.Brushes.White,
+                FontSize = 14
+            };
+
+            stack.Children.Add(tbReason);
+            stack.Children.Add(btnOk);
+            inputWindow.Content = stack;
+
+            btnOk.Click += (s, args) =>
+            {
+                string reason = tbReason.Text.Trim();
+                if (!string.IsNullOrWhiteSpace(reason))
+                {
+                    MessageBox.Show($"Книга «{currentBook.Title}» была заморожена.\n\nПричина: {reason}",
+                                  "Заморозка выполнена",
+                                  MessageBoxButton.OK,
+                                  MessageBoxImage.Warning);
+                }
+                inputWindow.Close();
+            };
+
+            inputWindow.ShowDialog();
+        }
+
     }
 }

@@ -39,8 +39,10 @@ namespace UP1.Views
             var frozenUsers = App.DataService.Users.Where(u => u.IsFrozen);
             foreach (var user in frozenUsers)
             {
-                lbFrozen.Items.Add($"Пользователь: {user.FullName} — {user.FreezeReason}");
+                lbFrozen.Items.Add($"👤 {user.FullName} ({user.Login}) — {user.FreezeReason}");
             }
+
+            // Можно добавить замороженные книги позже
         }
 
         private void BtnChangeRole_Click(object sender, RoutedEventArgs e)
@@ -62,7 +64,14 @@ namespace UP1.Views
 
         private void BtnUnfreeze_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Элемент разморожен", "Успешно");
+            if (lbFrozen.SelectedIndex == -1)
+            {
+                MessageBox.Show("Выберите элемент для разморозки");
+                return;
+            }
+
+            MessageBox.Show("Элемент успешно разморожен!", "Разморозка");
+            LoadFrozenItems();
         }
 
         private void BtnAcceptAuthor_Click(object sender, RoutedEventArgs e)

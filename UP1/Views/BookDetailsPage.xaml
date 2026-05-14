@@ -27,6 +27,7 @@
             <Button Content="📖 Читать книгу" Height="50" FontSize="16" Background="#4CAF50" Foreground="White" Margin="0,10" Click="BtnRead_Click"/>
             <Button Content="⭐ Оставить отзыв" Height="45" Margin="0,8" Background="#2196F3" Foreground="White" Click="BtnReview_Click"/>
             <Button Content="🚩 Пожаловаться на книгу" Height="45" Margin="0,8" Background="#F44336" Foreground="White" Click="BtnReportBook_Click"/>
+            <Button Content="❄️ Заморозить книгу" Height="45" Margin="0,8"  Background="#F44336" Foreground="White"  Click="BtnFreezeBook_Click" x:Name="btnFreezeBook" Visibility="Collapsed"/>
         </StackPanel>
 
         <!-- Правая колонка -->
