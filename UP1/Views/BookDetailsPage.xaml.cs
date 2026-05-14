@@ -43,8 +43,8 @@ namespace UP1.Views
 
         private void BtnRead_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(currentBook.Text ?? "Полный текст книги будет здесь...",
-                          $"Чтение: {currentBook.Title}", MessageBoxButton.OK, MessageBoxImage.Information);
+            ReadBookWindow readWindow = new ReadBookWindow(currentBook);
+            readWindow.ShowDialog();
         }
 
         private void BtnReview_Click(object sender, RoutedEventArgs e)
