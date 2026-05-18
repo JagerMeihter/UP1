@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using UP1.Models;
@@ -25,33 +26,65 @@ namespace UP1.Views
             tbTitle.Text = currentBook.Title;
             tbAuthor.Text = "Автор: " + currentBook.Author;
             tbRating.Text = $"⭐ {currentBook.Rating}";
-            tbDescription.Text = currentBook.Description ?? "Описание отсутствует.";
+            tbDescription.Text = currentBook.Description ?? "Описание книги отсутствует.";
+
+            // Кнопка заморозки видна только админу
+            btnFreezeBook.Visibility = MainWindow.CurrentUser?.Role == "Administrator"
+                                     ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void LoadReviews()
         {
             reviewsPanel.Children.Clear();
-            // Пока просто заглушка
-            var placeholder = new TextBlock
+            var reviews = App.DataService.GetReviewsForBook(currentBook.Id);
+
+            if (reviews.Count == 0)
             {
-                Text = "Пока нет отзывов. Будьте первым!",
-                Foreground = System.Windows.Media.Brushes.Gray,
-                Margin = new Thickness(10),
-                FontStyle = FontStyles.Italic
-            };
-            reviewsPanel.Children.Add(placeholder);
+                var tb = new TextBlock
+                {
+                    Text = "Пока нет отзывов. Будьте первым!",
+                    Foreground = System.Windows.Media.Brushes.Gray,
+                    FontStyle = FontStyles.Italic,
+                    Margin = new Thickness(10)
+                };
+                reviewsPanel.Children.Add(tb);
+                return;
+            }
+
+            foreach (var review in reviews)
+            {
+                var reviewBorder = new Border
+                {
+                    Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(40, 40, 40)),
+                    CornerRadius = new CornerRadius(8),
+                    Margin = new Thickness(0, 0, 0, 10),
+                    Padding = new Thickness(12)
+                };
+
+                var stack = new StackPanel();
+                stack.Children.Add(new TextBlock
+                {
+                    Text = $"{review.UserLogin} — {new string('★', review.Rating)}",
+                    Foreground = System.Windows.Media.Brushes.Gold,
+                    FontWeight = FontWeights.Bold
+                });
+                stack.Children.Add(new TextBlock
+                {
+                    Text = review.Text,
+                    Foreground = System.Windows.Media.Brushes.White,
+                    TextWrapping = TextWrapping.Wrap,
+                    Margin = new Thickness(0, 5, 0, 0)
+                });
+
+                reviewBorder.Child = stack;
+                reviewsPanel.Children.Add(reviewBorder);
+            }
         }
 
         private void BtnRead_Click(object sender, RoutedEventArgs e)
         {
             ReadBookWindow readWindow = new ReadBookWindow(currentBook);
             readWindow.ShowDialog();
-        }
-
-        private void BtnReview_Click(object sender, RoutedEventArgs e)
-        {
-            // Можно прокрутить к форме отзыва
-            MessageBox.Show("Заполните форму ниже и нажмите «Опубликовать отзыв»");
         }
 
         private void BtnPublishReview_Click(object sender, RoutedEventArgs e)
@@ -62,20 +95,37 @@ namespace UP1.Views
                 return;
             }
 
-            int rating = 5;
-            if (cmbRating.SelectedIndex >= 0)
-                rating = 5 - cmbRating.SelectedIndex;
+            int rating = 5 - cmbRating.SelectedIndex;
 
-            MessageBox.Show($"Отзыв на {rating} звёзд опубликован!\n\n«{txtReviewText.Text}»",
-                          "Спасибо!", MessageBoxButton.OK, MessageBoxImage.Information);
+            var review = new Review
+            {
+                Id = App.DataService.Reviews.Count + 1,
+                BookId = currentBook.Id,
+                UserId = MainWindow.CurrentUser.Id,
+                UserLogin = MainWindow.CurrentUser.Login,
+                Text = txtReviewText.Text,
+                Rating = rating
+            };
 
+            App.DataService.Reviews.Add(review);
+            App.DataService.SaveReviews();
+
+            MessageBox.Show("Отзыв успешно опубликован!", "Спасибо");
             txtReviewText.Clear();
-            LoadReviews(); // обновление списка
+            LoadReviews();
+
+            // Пересчёт среднего рейтинга книги (упрощённо)
+            var allReviews = App.DataService.GetReviewsForBook(currentBook.Id);
+            if (allReviews.Count > 0)
+            {
+                currentBook.Rating = Math.Round(allReviews.Average(r => r.Rating), 1);
+                App.DataService.SaveBooks();
+            }
         }
 
         private void BtnReportBook_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Жалоба на книгу отправлена администратору.", "Жалоба отправлена");
+            MessageBox.Show("Жалоба на книгу отправлена администратору.", "Жалоба");
         }
 
         private void BtnFreezeBook_Click(object sender, RoutedEventArgs e)
@@ -108,8 +158,7 @@ namespace UP1.Views
                 TextWrapping = TextWrapping.Wrap,
                 AcceptsReturn = true,
                 Background = System.Windows.Media.Brushes.White,
-                Foreground = System.Windows.Media.Brushes.Black,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+                Foreground = System.Windows.Media.Brushes.Black
             };
 
             var btnOk = new Button
@@ -118,8 +167,7 @@ namespace UP1.Views
                 Height = 40,
                 Margin = new Thickness(0, 15, 0, 0),
                 Background = System.Windows.Media.Brushes.OrangeRed,
-                Foreground = System.Windows.Media.Brushes.White,
-                FontSize = 14
+                Foreground = System.Windows.Media.Brushes.White
             };
 
             stack.Children.Add(tbReason);
@@ -131,16 +179,13 @@ namespace UP1.Views
                 string reason = tbReason.Text.Trim();
                 if (!string.IsNullOrWhiteSpace(reason))
                 {
-                    MessageBox.Show($"Книга «{currentBook.Title}» была заморожена.\n\nПричина: {reason}",
-                                  "Заморозка выполнена",
-                                  MessageBoxButton.OK,
-                                  MessageBoxImage.Warning);
+                    MessageBox.Show($"Книга «{currentBook.Title}» заморожена.\nПричина: {reason}",
+                                  "Заморозка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 inputWindow.Close();
             };
 
             inputWindow.ShowDialog();
         }
-
     }
 }
