@@ -29,6 +29,7 @@ namespace UP1.Windows
 
             // Предупреждение о заморозке
             btnFreezeWarning.Visibility = CurrentUser.IsFrozen ? Visibility.Visible : Visibility.Collapsed;
+
         }
 
         private void LoadDefaultPage()
@@ -78,12 +79,13 @@ namespace UP1.Windows
         }
         private void BtnFreezeWarning_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentUser == null) return;
-
-            MessageBox.Show($"Ваш аккаунт заморожен!\n\nПричина: {CurrentUser.FreezeReason ?? "Не указана"}\n\n" +
-                           "Вы можете подать заявку на разморозку в Профиле.",
-                           "Аккаунт заморожен",
-                           MessageBoxButton.OK, MessageBoxImage.Warning);
+            if (CurrentUser?.IsFrozen == true)
+            {
+                MessageBox.Show($"Ваш аккаунт заморожен!\n\nПричина: {CurrentUser.FreezeReason ?? "Не указана"}\n\n" +
+                               "Вы можете подать заявку на разморозку в разделе Профиль.",
+                               "Предупреждение",
+                               MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
     }
 }
