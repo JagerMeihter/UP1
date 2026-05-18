@@ -16,7 +16,7 @@ namespace UP1.Views
 
         public BookCatalogPage()
         {
-            InitializeComponent();
+            InitializeComponent();        // ← Это должно быть первым!
             LoadBooks();
             CreateGenreFilters();
         }
@@ -29,6 +29,8 @@ namespace UP1.Views
 
         private void CreateGenreFilters()
         {
+            if (genresPanel == null) return;
+
             genresPanel.Children.Clear();
             var allGenres = allBooks.SelectMany(b => b.Genres).Distinct().ToList();
 
@@ -47,26 +49,10 @@ namespace UP1.Views
             }
         }
 
-        private void Genre_Checked(object sender, RoutedEventArgs e)
-        {
-            var cb = sender as CheckBox;
-            if (cb != null && !selectedGenres.Contains(cb.Content.ToString()))
-                selectedGenres.Add(cb.Content.ToString());
-
-            ApplyFilters();
-        }
-
-        private void Genre_Unchecked(object sender, RoutedEventArgs e)
-        {
-            var cb = sender as CheckBox;
-            if (cb != null)
-                selectedGenres.Remove(cb.Content.ToString());
-
-            ApplyFilters();
-        }
-
         private void DisplayBooks(List<Book> books)
         {
+            if (booksPanel == null) return;   // ← Защита от null
+
             booksPanel.Children.Clear();
 
             foreach (var book in books)
@@ -90,7 +76,14 @@ namespace UP1.Views
 
             var stack = new StackPanel { Margin = new Thickness(10) };
 
-            var cover = new TextBlock { Text = book.Cover, FontSize = 65, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 10, 0, 8) };
+            var cover = new TextBlock
+            {
+                Text = book.Cover,
+                FontSize = 65,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 10, 0, 8)
+            };
+
             var title = new TextBlock
             {
                 Text = book.Title,
@@ -101,12 +94,14 @@ namespace UP1.Views
                 Margin = new Thickness(0, 0, 0, 5),
                 Height = 48
             };
+
             var author = new TextBlock
             {
                 Text = book.Author,
                 TextAlignment = TextAlignment.Center,
                 Foreground = System.Windows.Media.Brushes.LightGray
             };
+
             var rating = new TextBlock
             {
                 Text = $"⭐ {book.Rating}",
@@ -152,8 +147,28 @@ namespace UP1.Views
             ApplyFilters();
         }
 
+        private void Genre_Checked(object sender, RoutedEventArgs e)
+        {
+            var cb = sender as CheckBox;
+            if (cb != null && !selectedGenres.Contains(cb.Content.ToString()))
+                selectedGenres.Add(cb.Content.ToString());
+
+            ApplyFilters();
+        }
+
+        private void Genre_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var cb = sender as CheckBox;
+            if (cb != null)
+                selectedGenres.Remove(cb.Content.ToString());
+
+            ApplyFilters();
+        }
+
         private void ApplyFilters()
         {
+            if (allBooks == null || txtSearch == null || cmbSort == null) return;
+
             var searchText = txtSearch.Text.ToLower();
 
             var filtered = allBooks.Where(b =>
