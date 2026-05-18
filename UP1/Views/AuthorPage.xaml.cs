@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using UP1.Models;
 using UP1.Services;
-using UP1.Windows;
 
 namespace UP1.Views
 {
@@ -18,15 +17,10 @@ namespace UP1.Views
 
         private void LoadAuthorBooks()
         {
-            var user = MainWindow.CurrentUser;
-            if (user == null) return;
-
-            // Пока показываем все книги (в будущем фильтр по автору)
-            var books = App.DataService.Books;
-
             authorBooksPanel.Children.Clear();
+            var allBooks = App.DataService.Books;
 
-            foreach (var book in books)
+            foreach (var book in allBooks)
             {
                 var card = CreateBookCard(book);
                 authorBooksPanel.Children.Add(card);
@@ -37,8 +31,8 @@ namespace UP1.Views
         {
             var border = new Border
             {
-                Width = 160,
-                Height = 250,
+                Width = 170,
+                Height = 290,
                 Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(45, 45, 48)),
                 CornerRadius = new CornerRadius(10),
                 Margin = new Thickness(12),
@@ -54,17 +48,47 @@ namespace UP1.Views
                 FontWeight = FontWeights.Bold,
                 TextWrapping = TextWrapping.Wrap,
                 TextAlignment = TextAlignment.Center,
+                Foreground = System.Windows.Media.Brushes.White,
+                Margin = new Thickness(0, 0, 0, 5)
+            };
+            var author = new TextBlock
+            {
+                Text = book.Author,
+                TextAlignment = TextAlignment.Center,
+                Foreground = System.Windows.Media.Brushes.LightGray
+            };
+
+            var btnEdit = new Button
+            {
+                Content = "✏️ Редактировать",
+                Height = 30,
+                Margin = new Thickness(0, 8, 0, 0),
+                Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 152, 0)),
                 Foreground = System.Windows.Media.Brushes.White
             };
 
             stack.Children.Add(cover);
             stack.Children.Add(title);
+            stack.Children.Add(author);
+            stack.Children.Add(btnEdit);
 
             border.Child = stack;
 
+            // Открыть книгу
             border.MouseLeftButtonUp += (s, e) =>
             {
-                NavigationService.Navigate(new BookDetailsPage(book));
+                if (s != btnEdit)
+                    NavigationService.Navigate(new BookDetailsPage(book));
+            };
+
+            // Редактировать книгу
+            btnEdit.Click += (s, e) =>
+            {
+                var editWindow = new EditBookWindow(book);
+                if (editWindow.ShowDialog() == true)
+                {
+                    LoadAuthorBooks(); // обновляем список
+                }
             };
 
             return border;
@@ -75,7 +99,7 @@ namespace UP1.Views
             var addWindow = new AddBookWindow();
             if (addWindow.ShowDialog() == true)
             {
-                LoadAuthorBooks(); // обновляем список после добавления
+                LoadAuthorBooks();
             }
         }
     }
