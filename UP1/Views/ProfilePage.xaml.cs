@@ -29,7 +29,8 @@ namespace UP1.Views
             if (currentUser.IsFrozen)
             {
                 tbFreezeWarning.Visibility = Visibility.Visible;
-                tbFreezeWarning.Text = $"⚠️ Аккаунт заморожен!\nПричина: {currentUser.FreezeReason}";
+                tbFreezeWarning.Text = $"⚠️ Аккаунт заморожен!\nПричина: {currentUser.FreezeReason}\n\n" +
+                                       "Вы можете оспорить решение в Администрации.";
             }
 
             btnApplyAuthor.Visibility = currentUser.Role == "User" ? Visibility.Visible : Visibility.Collapsed;

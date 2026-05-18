@@ -19,11 +19,16 @@ namespace UP1.Windows
 
         private void ApplyRoleVisibility()
         {
+            if (CurrentUser == null) return;
+
             btnAuthor.Visibility = (CurrentUser.Role == "Author" || CurrentUser.Role == "Administrator")
                                  ? Visibility.Visible : Visibility.Collapsed;
 
             btnAdmin.Visibility = CurrentUser.Role == "Administrator"
                                 ? Visibility.Visible : Visibility.Collapsed;
+
+            // Предупреждение о заморозке
+            btnFreezeWarning.Visibility = CurrentUser.IsFrozen ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void LoadDefaultPage()
@@ -70,6 +75,15 @@ namespace UP1.Windows
                 login.Show();
                 this.Close();
             }
+        }
+        private void BtnFreezeWarning_Click(object sender, RoutedEventArgs e)
+        {
+            if (CurrentUser == null) return;
+
+            MessageBox.Show($"Ваш аккаунт заморожен!\n\nПричина: {CurrentUser.FreezeReason ?? "Не указана"}\n\n" +
+                           "Вы можете подать заявку на разморозку в Профиле.",
+                           "Аккаунт заморожен",
+                           MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 }

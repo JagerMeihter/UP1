@@ -31,7 +31,10 @@
                 <Button x:Name="btnAdmin" Height="60" Click="BtnAdmin_Click" ToolTip="Администрирование" Visibility="Collapsed">
                     <TextBlock Text="⚙️" FontSize="24"/>
                 </Button>
-
+                <Button x:Name="btnFreezeWarning" Height="60" Click="BtnFreezeWarning_Click" 
+                    ToolTip="Аккаунт заморожен!" Background="#D32F2F" Visibility="Collapsed">
+                    <TextBlock Text="⚠️" FontSize="28"/>
+                </Button>
                 <Button x:Name="btnProfile" Height="60" Click="BtnProfile_Click" ToolTip="Профиль" Margin="0,20,0,0">
                     <TextBlock Text="👤" FontSize="24"/>
                 </Button>
