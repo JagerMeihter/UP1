@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Windows;
-using UP1.Models;
+﻿using System.Windows;
 using UP1.Services;
 using UP1.Windows;
 
@@ -24,8 +22,7 @@ namespace UP1.Windows
                 return;
             }
 
-            var user = App.DataService.Users.FirstOrDefault(u =>
-                (u.Login == login || u.Email == login) && u.Password == password);
+            var user = App.DataService.GetUser(login, password);   // Новый метод
 
             if (user != null)
             {
@@ -48,10 +45,7 @@ namespace UP1.Windows
 
         private void BtnRegister_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Полноценная регистрация будет добавлена позже.\n\nПока используйте тестовые аккаунты:\n\n" +
-                          "admin / admin123\n" +
-                          "author / author123\n" +
-                          "user / user123", "Информация");
+            MessageBox.Show("Регистрация будет добавлена позже.\n\nТестовые аккаунты:\nadmin / admin123\nauthor / author123\nuser / user123");
         }
     }
 }

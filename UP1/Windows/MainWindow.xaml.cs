@@ -21,15 +21,13 @@ namespace UP1.Windows
         {
             if (CurrentUser == null) return;
 
-            btnAuthor.Visibility = (CurrentUser.Role == "Author" || CurrentUser.Role == "Administrator")
+            btnAuthor.Visibility = (CurrentUser.Role?.Name == "Author" || CurrentUser.Role?.Name == "Administrator")
                                  ? Visibility.Visible : Visibility.Collapsed;
 
-            btnAdmin.Visibility = CurrentUser.Role == "Administrator"
+            btnAdmin.Visibility = CurrentUser.Role?.Name == "Administrator"
                                 ? Visibility.Visible : Visibility.Collapsed;
 
-            // Предупреждение о заморозке
             btnFreezeWarning.Visibility = CurrentUser.IsFrozen ? Visibility.Visible : Visibility.Collapsed;
-
         }
 
         private void LoadDefaultPage()
