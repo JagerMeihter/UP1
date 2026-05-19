@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace UP1.Models
 {
@@ -7,19 +6,12 @@ namespace UP1.Models
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public string Author { get; set; }
         public string Description { get; set; }
-        public string CoverPath { get; set; }
-        public string Content { get; set; }           // текст книги
-
-        public int AuthorId { get; set; }
-        public virtual User Author { get; set; }
-
-        public bool IsFrozen { get; set; } = false;
-        public string FreezeReason { get; set; }
-
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-
-        public virtual ICollection<BookGenre> BookGenres { get; set; } = new List<BookGenre>();
-        public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public double Rating { get; set; } = 0.0;
+        public string Cover { get; set; } = "📖";
+        public string Text { get; set; }
+        public string Genre { get; set; }   // для совместимости со старым кодом
+        public List<string> Genres { get; set; } = new List<string>();
     }
 }

@@ -21,10 +21,10 @@ namespace UP1.Windows
         {
             if (CurrentUser == null) return;
 
-            btnAuthor.Visibility = (CurrentUser.Role?.Name == "Author" || CurrentUser.Role?.Name == "Administrator")
+            btnAuthor.Visibility = (CurrentUser.Role == "Author" || CurrentUser.Role == "Administrator")
                                  ? Visibility.Visible : Visibility.Collapsed;
 
-            btnAdmin.Visibility = CurrentUser.Role?.Name == "Administrator"
+            btnAdmin.Visibility = CurrentUser.Role == "Administrator"
                                 ? Visibility.Visible : Visibility.Collapsed;
 
             btnFreezeWarning.Visibility = CurrentUser.IsFrozen ? Visibility.Visible : Visibility.Collapsed;
@@ -68,21 +68,20 @@ namespace UP1.Windows
 
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Выйти из аккаунта?", "Выход", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Выйти из аккаунта?", "Выход", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 LoginWindow login = new LoginWindow();
                 login.Show();
                 this.Close();
             }
         }
+
         private void BtnFreezeWarning_Click(object sender, RoutedEventArgs e)
         {
             if (CurrentUser?.IsFrozen == true)
             {
-                MessageBox.Show($"Ваш аккаунт заморожен!\n\nПричина: {CurrentUser.FreezeReason ?? "Не указана"}\n\n" +
-                               "Вы можете подать заявку на разморозку в разделе Профиль.",
-                               "Предупреждение",
-                               MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Аккаунт заморожен!\nПричина: {CurrentUser.FreezeReason ?? "Не указана"}",
+                              "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
     }

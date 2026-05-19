@@ -7,39 +7,34 @@ namespace UP1.Views
 {
     public partial class ProfilePage : Page
     {
-        private User currentUser;
-
         public ProfilePage()
         {
             InitializeComponent();
             LoadUserInfo();
         }
-
-        private void LoadUserInfo()
-        {
-            currentUser = MainWindow.CurrentUser; // будем брать из MainWindow
-
-            if (currentUser == null) return;
-
-            tbFullName.Text = $"Имя: {currentUser.FullName}";
-            tbLogin.Text = $"Логин: {currentUser.Login}";
-            tbEmail.Text = $"Email: {currentUser.Email}";
-            tbRole.Text = $"Роль: {currentUser.Role}";
-
-            if (currentUser.IsFrozen)
-            {
-                tbFreezeWarning.Visibility = Visibility.Visible;
-                tbFreezeWarning.Text = $"⚠️ Аккаунт заморожен!\nПричина: {currentUser.FreezeReason}\n\n" +
-                                       "Вы можете оспорить решение в Администрации.";
-            }
-
-            btnApplyAuthor.Visibility = currentUser.Role == "User" ? Visibility.Visible : Visibility.Collapsed;
-        }
-
         private void BtnApplyAuthor_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Заявка на роль Автора отправлена администратору!", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
-            // В будущем будет сохраняться в список заявок
+            MessageBox.Show("Заявка на роль Автора отправлена администратору!", "Успешно");
+        }
+        private void LoadUserInfo()
+        {
+            var user = MainWindow.CurrentUser;
+            if (user == null) return;
+
+            tbFullName.Text = $"Имя: {user.FullName}";
+            tbLogin.Text = $"Логин: {user.Login}";
+            tbEmail.Text = $"Email: {user.Email}";
+            tbRole.Text = $"Роль: {user.Role}";
+
+            if (user.IsFrozen)
+            {
+                tbFreezeWarning.Visibility = Visibility.Visible;
+                tbFreezeWarning.Text = $"⚠️ Аккаунт заморожен!\nПричина: {user.FreezeReason}";
+            }
+            else
+            {
+                tbFreezeWarning.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

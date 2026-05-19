@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using UP1.Services;
 using UP1.Windows;
 
@@ -18,28 +19,22 @@ namespace UP1.Windows
 
             if (string.IsNullOrWhiteSpace(login) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Введите логин и пароль!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Введите логин и пароль!", "Ошибка");
                 return;
             }
 
-            var user = App.DataService.GetUser(login, password);   // Новый метод
+            var user = App.DataService.Users.FirstOrDefault(u =>
+                u.Login == login && u.Password == password);
 
             if (user != null)
             {
-                if (user.IsFrozen)
-                {
-                    MessageBox.Show($"Ваш аккаунт заморожен!\nПричина: {user.FreezeReason}",
-                                  "Доступ запрещён", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
                 MainWindow main = new MainWindow(user);
                 main.Show();
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Неверный логин или пароль!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Неверный логин или пароль!");
             }
         }
 

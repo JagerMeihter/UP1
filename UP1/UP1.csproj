@@ -82,7 +82,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\AppDbContext.cs" />
-    <Compile Include="Data\DatabaseInitializer.cs" />
     <Compile Include="Models\Book.cs" />
     <Compile Include="Models\BookGenre.cs" />
     <Compile Include="Models\Complaint.cs" />
