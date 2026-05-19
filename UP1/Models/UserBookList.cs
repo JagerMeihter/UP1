@@ -1,16 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace UP1.Models
 {
     public class UserBookList
-{
-    public int UserId { get; set; }
-    public int BookId { get; set; }
-    public string Shelf { get; set; } // "В планах", "Читаю", "Прочитано", "Заброшено"
-}
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public virtual User User { get; set; }
+
+        public int BookId { get; set; }
+        public virtual Book Book { get; set; }
+
+        public int StatusId { get; set; }
+        public virtual ReadingStatus Status { get; set; }
+
+        public DateTime AddedAt { get; set; } = DateTime.Now;
+    }
 }

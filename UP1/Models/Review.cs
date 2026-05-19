@@ -6,10 +6,16 @@ namespace UP1.Models
     {
         public int Id { get; set; }
         public int BookId { get; set; }
+        public virtual Book Book { get; set; }
+
         public int UserId { get; set; }
-        public string UserLogin { get; set; }
-        public string Text { get; set; }
-        public int Rating { get; set; }           // от 1 до 5
-        public DateTime Date { get; set; } = DateTime.Now;
+        public virtual User User { get; set; }
+
+        public string ReviewText { get; set; }
+        public int Rating { get; set; }        // 1 до 10
+
+        public bool IsFrozen { get; set; } = false;
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

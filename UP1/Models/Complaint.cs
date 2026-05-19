@@ -1,19 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UP1.Models
 {
     public class Complaint
     {
         public int Id { get; set; }
-        public string Type { get; set; }        // Book, User, Review
-        public int TargetId { get; set; }       // ID книги / пользователя / отзыва
+        public int UserId { get; set; }
+        public virtual User User { get; set; }
+
+        public int? BookId { get; set; }
+        public virtual Book Book { get; set; }
+
+        public int? ReviewId { get; set; }
+        public virtual Review Review { get; set; }
+
+        public int? TargetUserId { get; set; }
+        public virtual User TargetUser { get; set; }
+
+        public int ComplaintTypeId { get; set; }
+        public virtual ComplaintType ComplaintType { get; set; }
+
         public string Reason { get; set; }
-        public string ComplainantLogin { get; set; }
-        public DateTime Date { get; set; } = DateTime.Now;
         public bool IsResolved { get; set; } = false;
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
