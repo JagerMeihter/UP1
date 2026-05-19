@@ -8,6 +8,7 @@ namespace UP1.Data
     {
         public AppDbContext() : base("ReadWriteDbConnection")
         {
+            Database.SetInitializer(new DatabaseInitializer());
         }
 
         public DbSet<User> Users { get; set; }
