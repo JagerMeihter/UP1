@@ -21,7 +21,7 @@ namespace UP1.Windows
         {
             if (CurrentUser == null) return;
 
-            string roleName = CurrentUser.Role?.Name ?? CurrentUser.Role?.ToString() ?? "User";
+            string roleName = CurrentUser.Role?.Name ?? "User";
 
             btnAuthor.Visibility = (roleName == "Author" || roleName == "Administrator")
                                  ? Visibility.Visible : Visibility.Collapsed;
@@ -75,6 +75,15 @@ namespace UP1.Windows
                 LoginWindow login = new LoginWindow();
                 login.Show();
                 this.Close();
+            }
+        }
+        private void BtnFreezeWarning_Click(object sender, RoutedEventArgs e)
+        {
+            if (CurrentUser?.IsFrozen == true)
+            {
+                MessageBox.Show($"Ваш аккаунт заморожен!\n\nПричина: {CurrentUser.FreezeReason ?? "Не указана"}",
+                                "Предупреждение",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
     }

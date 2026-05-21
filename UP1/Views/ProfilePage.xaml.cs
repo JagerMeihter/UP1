@@ -12,7 +12,10 @@ namespace UP1.Views
             InitializeComponent();
             LoadUserInfo();
         }
-
+        private void BtnApplyAuthor_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Заявка на роль Автора отправлена администратору!", "Успешно");
+        }
         private void LoadUserInfo()
         {
             var user = MainWindow.CurrentUser;
@@ -29,5 +32,6 @@ namespace UP1.Views
                 tbFreezeWarning.Text = $"⚠️ Аккаунт заморожен!\nПричина: {user.FreezeReason}";
             }
         }
+
     }
 }

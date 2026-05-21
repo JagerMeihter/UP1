@@ -16,6 +16,7 @@ namespace UP1.Models
 
         public bool IsFrozen { get; set; } = false;
         public string FreezeReason { get; set; }
+        public float Rating { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

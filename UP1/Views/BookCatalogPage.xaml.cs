@@ -75,7 +75,7 @@ namespace UP1.Views
 
             var rating = new TextBlock
             {
-                Text = $"⭐ {book.Rating}",
+                Text = $"⭐ {book.Rating:F1}",
                 Foreground = System.Windows.Media.Brushes.Gold,
                 HorizontalAlignment = HorizontalAlignment.Center
             };

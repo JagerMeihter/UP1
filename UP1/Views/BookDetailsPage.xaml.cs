@@ -28,7 +28,7 @@ namespace UP1.Views
             tbRating.Text = $"⭐ {currentBook.Rating}";
             tbDescription.Text = currentBook.Description ?? "Описание отсутствует.";
 
-            btnFreezeBook.Visibility = MainWindow.CurrentUser?.Role == "Administrator"
+            btnFreezeBook.Visibility = (MainWindow.CurrentUser?.Role?.Name == "Administrator")
                                      ? Visibility.Visible : Visibility.Collapsed;
         }
 

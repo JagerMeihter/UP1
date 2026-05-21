@@ -20,15 +20,13 @@
             <StackPanel Orientation="Horizontal">
                 <!-- Поиск -->
                 <TextBox x:Name="txtSearch" Width="320" Height="38" 
-                 TextChanged="TxtSearch_TextChanged"
-                 Background="#3C3C3C" Foreground="White" 
-                 BorderBrush="#555555" Margin="0,0,15,0"
-                 VerticalContentAlignment="Center"
-                 FontSize="14"/>
+         Background="#3C3C3C" Foreground="White" 
+         BorderBrush="#555555" Margin="0,0,15,0"
+         VerticalContentAlignment="Center" FontSize="14"/>
 
                 <!-- Сортировка -->
                 <ComboBox x:Name="cmbSort" Width="200" Height="38" 
-                  SelectionChanged="CmbSort_SelectionChanged"
+                  SelectionChanged=""
                   Background="#3C3C3C" Foreground="White" Margin="0,0,15,0">
                     <ComboBoxItem Content="По названию (А-Я)" IsSelected="True"/>
                     <ComboBoxItem Content="По названию (Я-А)"/>
