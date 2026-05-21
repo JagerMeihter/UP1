@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using UP1.Models;
 
 namespace UP1.Data
@@ -8,7 +7,8 @@ namespace UP1.Data
     {
         public AppDbContext() : base("ReadWriteDbConnection")
         {
-            //Database.SetInitializer(new DatabaseInitializer());
+            // Автоматическое создание и обновление БД при запуске
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<AppDbContext, Configuration>());
         }
 
         public DbSet<User> Users { get; set; }

@@ -12,28 +12,21 @@ namespace UP1.Views
             InitializeComponent();
             LoadUserInfo();
         }
-        private void BtnApplyAuthor_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Заявка на роль Автора отправлена администратору!", "Успешно");
-        }
+
         private void LoadUserInfo()
         {
             var user = MainWindow.CurrentUser;
             if (user == null) return;
 
-            tbFullName.Text = $"Имя: {user.FullName}";
+            tbFullName.Text = $"Имя: {user.DisplayName}";
             tbLogin.Text = $"Логин: {user.Login}";
             tbEmail.Text = $"Email: {user.Email}";
-            tbRole.Text = $"Роль: {user.Role}";
+            tbRole.Text = $"Роль: {user.Role?.Name ?? user.Role?.ToString() ?? "User"}";
 
             if (user.IsFrozen)
             {
                 tbFreezeWarning.Visibility = Visibility.Visible;
                 tbFreezeWarning.Text = $"⚠️ Аккаунт заморожен!\nПричина: {user.FreezeReason}";
-            }
-            else
-            {
-                tbFreezeWarning.Visibility = Visibility.Collapsed;
             }
         }
     }

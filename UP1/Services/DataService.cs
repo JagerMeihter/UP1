@@ -1,73 +1,82 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Data.Entity;
 using System.Linq;
+using UP1.Data;
 using UP1.Models;
 
 namespace UP1.Services
 {
     public class DataService
     {
-        private static readonly string BooksFile = "Data/books.json";
-        private static readonly string UsersFile = "Data/users.json";
+        private readonly AppDbContext db = new AppDbContext();
 
-        public List<Book> Books { get; private set; }
-        public List<User> Users { get; private set; }
-
-        public DataService()
+        public User GetUser(string login, string password)
         {
-            LoadData();
+            return db.Users.Include(u => u.Role)
+                           .FirstOrDefault(u => u.Login == login && u.PasswordHash == password);
         }
 
-        private void LoadData()
+        public List<Book> GetAllBooks()
         {
-            if (!Directory.Exists("Data"))
-                Directory.CreateDirectory("Data");
-
-            Books = File.Exists(BooksFile)
-                ? JsonConvert.DeserializeObject<List<Book>>(File.ReadAllText(BooksFile)) ?? GetSampleBooks()
-                : GetSampleBooks();
-
-            Users = File.Exists(UsersFile)
-                ? JsonConvert.DeserializeObject<List<User>>(File.ReadAllText(UsersFile)) ?? GetSampleUsers()
-                : GetSampleUsers();
+            return db.Books.Include(b => b.Author).ToList();
         }
 
-        private List<Book> GetSampleBooks()
+        public List<Review> GetReviewsForBook(int bookId)
         {
-            return new List<Book>
+            return db.Reviews.Include(r => r.User)
+                             .Where(r => r.BookId == bookId)
+                             .OrderByDescending(r => r.CreatedAt)
+                             .ToList();
+        }
+
+        public void AddReview(Review review)
+        {
+            db.Reviews.Add(review);
+            db.SaveChanges();
+        }
+
+        public List<Book> GetBooksOnShelf(int userId, string statusName)
+        {
+            var status = db.ReadingStatuses.FirstOrDefault(s => s.Name == statusName);
+            if (status == null) return new List<Book>();
+
+            return db.UserBookLists
+                     .Where(ubl => ubl.UserId == userId && ubl.StatusId == status.Id)
+                     .Select(ubl => ubl.Book)
+                     .Include(b => b.Author)
+                     .ToList();
+        }
+
+        public void AddBookToShelf(int userId, int bookId, string statusName)
+        {
+            var status = db.ReadingStatuses.FirstOrDefault(s => s.Name == statusName);
+            if (status == null) return;
+
+            var existing = db.UserBookLists.Where(ubl => ubl.UserId == userId && ubl.BookId == bookId);
+            db.UserBookLists.RemoveRange(existing);
+
+            db.UserBookLists.Add(new UserBookList
             {
-                new Book { Id = 1, Title = "Тени прошлого", Author = "Анна Смирнова", Rating = 4.8, Cover = "📖", Text = "Текст книги 1...", Genres = new List<string> { "Фантастика" } },
-                new Book { Id = 2, Title = "Последний рассвет", Author = "Дмитрий Волков", Rating = 4.5, Cover = "🔍", Text = "Текст книги 2...", Genres = new List<string> { "Детектив" } },
-                new Book { Id = 3, Title = "Сердце в огне", Author = "Мария Лебедева", Rating = 4.9, Cover = "❤️", Text = "Текст книги 3...", Genres = new List<string> { "Романтика" } }
-            };
+                UserId = userId,
+                BookId = bookId,
+                StatusId = status.Id
+            });
+
+            db.SaveChanges();
         }
 
-        private List<User> GetSampleUsers()
+        public void SaveChanges() => db.SaveChanges();
+        public void UpdateBook(Book book)
         {
-            return new List<User>
-            {
-                new User { Id = 1, Login = "admin", Password = "admin123", FullName = "Администратор", Email = "admin@up1.ru", Role = "Administrator" },
-                new User { Id = 2, Login = "author", Password = "author123", FullName = "Иван Автор", Email = "author@up1.ru", Role = "Author" },
-                new User { Id = 3, Login = "user", Password = "user123", FullName = "Петр Пользователь", Email = "user@up1.ru", Role = "User" }
-            };
+            db.Entry(book).State = EntityState.Modified;
+            db.SaveChanges();
         }
 
-        public void SaveBooks() => File.WriteAllText(BooksFile, JsonConvert.SerializeObject(Books, Formatting.Indented));
-        public void SaveUsers() => File.WriteAllText(UsersFile, JsonConvert.SerializeObject(Users, Formatting.Indented));
-        public List<Book> GetBooksOnShelf(int userId, string shelf)
+        public void AddBook(Book book)
         {
-            // Пока возвращаем все книги (для совместимости)
-            return Books.ToList();
+            db.Books.Add(book);
+            db.SaveChanges();
         }
-
-        public void AddBookToShelf(int userId, int bookId, string shelf)
-        {
-            // Пока просто сообщение
-            // В будущем здесь будет логика сохранения
-        }
-
-        public void SaveReviews() { }   // заглушка
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using UP1.Models;
 using UP1.Services;
@@ -18,9 +16,9 @@ namespace UP1.Views
         private void LoadAuthorBooks()
         {
             authorBooksPanel.Children.Clear();
-            var allBooks = App.DataService.Books;
+            var books = App.DataService.GetAllBooks();
 
-            foreach (var book in allBooks)
+            foreach (var book in books)
             {
                 var card = CreateBookCard(book);
                 authorBooksPanel.Children.Add(card);
@@ -41,22 +39,8 @@ namespace UP1.Views
 
             var stack = new StackPanel { Margin = new Thickness(10) };
 
-            var cover = new TextBlock { Text = book.Cover, FontSize = 60, HorizontalAlignment = HorizontalAlignment.Center };
-            var title = new TextBlock
-            {
-                Text = book.Title,
-                FontWeight = FontWeights.Bold,
-                TextWrapping = TextWrapping.Wrap,
-                TextAlignment = TextAlignment.Center,
-                Foreground = System.Windows.Media.Brushes.White,
-                Margin = new Thickness(0, 0, 0, 5)
-            };
-            var author = new TextBlock
-            {
-                Text = book.Author,
-                TextAlignment = TextAlignment.Center,
-                Foreground = System.Windows.Media.Brushes.LightGray
-            };
+            var cover = new TextBlock { Text = book.CoverPath ?? "📖", FontSize = 60, HorizontalAlignment = HorizontalAlignment.Center };
+            var title = new TextBlock { Text = book.Title, FontWeight = FontWeights.Bold, TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center, Foreground = System.Windows.Media.Brushes.White };
 
             var btnEdit = new Button
             {
@@ -69,26 +53,21 @@ namespace UP1.Views
 
             stack.Children.Add(cover);
             stack.Children.Add(title);
-            stack.Children.Add(author);
             stack.Children.Add(btnEdit);
 
             border.Child = stack;
 
-            // Открыть книгу
             border.MouseLeftButtonUp += (s, e) =>
             {
                 if (s != btnEdit)
                     NavigationService.Navigate(new BookDetailsPage(book));
             };
 
-            // Редактировать книгу
             btnEdit.Click += (s, e) =>
             {
                 var editWindow = new EditBookWindow(book);
                 if (editWindow.ShowDialog() == true)
-                {
-                    LoadAuthorBooks(); // обновляем список
-                }
+                    LoadAuthorBooks();
             };
 
             return border;
@@ -98,9 +77,7 @@ namespace UP1.Views
         {
             var addWindow = new AddBookWindow();
             if (addWindow.ShowDialog() == true)
-            {
                 LoadAuthorBooks();
-            }
         }
     }
 }

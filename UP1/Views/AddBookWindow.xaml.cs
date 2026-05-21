@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using UP1.Models;
 using UP1.Services;
-using UP1.Windows;
 
 namespace UP1.Views
 {
@@ -10,33 +9,28 @@ namespace UP1.Views
         public AddBookWindow()
         {
             InitializeComponent();
-            txtAuthor.Text = MainWindow.CurrentUser?.FullName ?? "Автор";
         }
 
         private void BtnPublish_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtTitle.Text))
             {
-                MessageBox.Show("Название книги обязательно!", "Ошибка");
+                MessageBox.Show("Название книги обязательно!");
                 return;
             }
 
             var newBook = new Book
             {
-                Id = App.DataService.Books.Count + 1,
                 Title = txtTitle.Text,
-                Author = txtAuthor.Text,
-                Genre = cmbGenre.Text,
                 Description = txtDescription.Text,
-                Text = txtText.Text,
-                Rating = 0.0,
-                Cover = "📖"
+                Content = txtText.Text,
+                CoverPath = "📖",
+                Rating = 0.0
             };
 
-            App.DataService.Books.Add(newBook);
-            App.DataService.SaveBooks();
+            App.DataService.AddBook(newBook);
 
-            MessageBox.Show("Книга успешно опубликована!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Книга успешно опубликована!", "Успех");
             this.DialogResult = true;
             this.Close();
         }

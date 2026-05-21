@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using UP1.Models;
@@ -48,19 +47,6 @@ namespace UP1.Views
                 var card = CreateBookCard(book);
                 listsBooksPanel.Children.Add(card);
             }
-
-            if (books.Count == 0)
-            {
-                var tb = new TextBlock
-                {
-                    Text = "На этой полке пока пусто",
-                    Foreground = System.Windows.Media.Brushes.Gray,
-                    FontSize = 16,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    Margin = new Thickness(50)
-                };
-                listsBooksPanel.Children.Add(tb);
-            }
         }
 
         private Border CreateBookCard(Book book)
@@ -77,22 +63,9 @@ namespace UP1.Views
 
             var stack = new StackPanel { Margin = new Thickness(10) };
 
-            var cover = new TextBlock { Text = book.Cover, FontSize = 60, HorizontalAlignment = HorizontalAlignment.Center };
-            var title = new TextBlock
-            {
-                Text = book.Title,
-                FontWeight = FontWeights.Bold,
-                TextWrapping = TextWrapping.Wrap,
-                TextAlignment = TextAlignment.Center,
-                Foreground = System.Windows.Media.Brushes.White,
-                Margin = new Thickness(0, 0, 0, 5)
-            };
-            var author = new TextBlock
-            {
-                Text = book.Author,
-                TextAlignment = TextAlignment.Center,
-                Foreground = System.Windows.Media.Brushes.LightGray
-            };
+            var cover = new TextBlock { Text = book.CoverPath ?? "📖", FontSize = 60, HorizontalAlignment = HorizontalAlignment.Center };
+            var title = new TextBlock { Text = book.Title, FontWeight = FontWeights.Bold, TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center, Foreground = System.Windows.Media.Brushes.White };
+            var author = new TextBlock { Text = book.Author?.DisplayName ?? "Неизвестен", TextAlignment = TextAlignment.Center, Foreground = System.Windows.Media.Brushes.LightGray };
 
             stack.Children.Add(cover);
             stack.Children.Add(title);
@@ -100,46 +73,14 @@ namespace UP1.Views
 
             border.Child = stack;
 
-            // Контекстное меню для перемещения
-            border.ContextMenu = new ContextMenu();
-            string[] shelves = { "В планах", "Читаю", "Прочитано", "Заброшено" };
-
-            foreach (var s in shelves)
-            {
-                if (s != currentShelf)
-                {
-                    var mi = new MenuItem { Header = $"Переместить в «{s}»" };
-                    mi.Click += (sender, e) => MoveBookToShelf(book, s);
-                    border.ContextMenu.Items.Add(mi);
-                }
-            }
-
-            border.MouseLeftButtonUp += (s, e) =>
-            {
-                NavigationService.Navigate(new BookDetailsPage(book));
-            };
+            border.MouseLeftButtonUp += (s, e) => NavigationService.Navigate(new BookDetailsPage(book));
 
             return border;
         }
 
-        private void MoveBookToShelf(Book book, string newShelf)
-        {
-            var user = MainWindow.CurrentUser;
-            if (user == null) return;
-
-            App.DataService.AddBookToShelf(user.Id, book.Id, newShelf);
-            LoadShelf(currentShelf); // обновляем текущую полку
-        }
-
-        // Кнопки вкладок
         private void BtnPlan_Click(object sender, RoutedEventArgs e) => LoadShelf("В планах");
         private void BtnReading_Click(object sender, RoutedEventArgs e) => LoadShelf("Читаю");
         private void BtnFinished_Click(object sender, RoutedEventArgs e) => LoadShelf("Прочитано");
         private void BtnDropped_Click(object sender, RoutedEventArgs e) => LoadShelf("Заброшено");
-
-        private void CmbSortLists_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // Заглушка на будущее
-        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using UP1.Models;
 using UP1.Services;
 
@@ -19,11 +18,8 @@ namespace UP1.Views
         private void LoadBookData()
         {
             txtTitle.Text = currentBook.Title;
-            cmbGenre.Items.Add("Фантастика"); cmbGenre.Items.Add("Детектив");
-            cmbGenre.Items.Add("Романтика"); cmbGenre.Items.Add("Поэзия");
-            cmbGenre.Text = currentBook.Genres?.FirstOrDefault() ?? "Фантастика";
             txtDescription.Text = currentBook.Description;
-            txtText.Text = currentBook.Text;
+            txtText.Text = currentBook.Content;
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
@@ -36,10 +32,9 @@ namespace UP1.Views
 
             currentBook.Title = txtTitle.Text;
             currentBook.Description = txtDescription.Text;
-            currentBook.Text = txtText.Text;
-            currentBook.Genres = new System.Collections.Generic.List<string> { cmbGenre.Text };
+            currentBook.Content = txtText.Text;
 
-            App.DataService.SaveBooks();
+            App.DataService.UpdateBook(currentBook);
 
             MessageBox.Show("Книга успешно обновлена!", "Успех");
             this.DialogResult = true;
