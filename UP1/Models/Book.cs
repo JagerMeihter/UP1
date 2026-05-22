@@ -21,5 +21,6 @@ namespace UP1.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public string Text { get; internal set; }
     }
 }

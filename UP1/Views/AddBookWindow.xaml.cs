@@ -25,7 +25,7 @@ namespace UP1.Views
                 Description = txtDescription.Text,
                 Content = txtText.Text,
                 CoverPath = "📖",
-                Rating = 0.0
+                Rating = 0
             };
 
             App.DataService.AddBook(newBook);
