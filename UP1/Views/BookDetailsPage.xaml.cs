@@ -63,5 +63,9 @@ namespace UP1.Views
         {
             MessageBox.Show("Функция заморозки книги (EF)", "Заморозка");
         }
+        private void BtnReportBook_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Жалоба на книгу отправлена администратору.", "Жалоба отправлена");
+        }
     }
 }

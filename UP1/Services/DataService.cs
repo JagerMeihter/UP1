@@ -10,24 +10,64 @@ namespace UP1.Services
     public class DataService
     {
         private readonly AppDbContext db = new AppDbContext();
-        internal object Users;
 
-        // ====================== USERS ======================
+        public DataService()
+        {
+            SeedTestData();   // Принудительно создаём тестовых пользователей
+        }
+
+        private void SeedTestData()
+        {
+            if (!db.Users.Any())
+            {
+                db.Roles.Add(new Role { Name = "Administrator" });
+                db.Roles.Add(new Role { Name = "Author" });
+                db.Roles.Add(new Role { Name = "User" });
+                db.SaveChanges();
+
+                var adminRole = db.Roles.First(r => r.Name == "Administrator");
+                var authorRole = db.Roles.First(r => r.Name == "Author");
+                var userRole = db.Roles.First(r => r.Name == "User");
+
+                db.Users.Add(new User
+                {
+                    Login = "admin",
+                    PasswordHash = "admin123",
+                    DisplayName = "Администратор",
+                    Email = "admin@up1.ru",
+                    RoleId = adminRole.Id
+                });
+
+                db.Users.Add(new User
+                {
+                    Login = "author",
+                    PasswordHash = "author123",
+                    DisplayName = "Иван Автор",
+                    Email = "author@up1.ru",
+                    RoleId = authorRole.Id
+                });
+
+                db.Users.Add(new User
+                {
+                    Login = "user",
+                    PasswordHash = "user123",
+                    DisplayName = "Петр Пользователь",
+                    Email = "user@up1.ru",
+                    RoleId = userRole.Id
+                });
+
+                db.SaveChanges();
+            }
+        }
+
         public User GetUser(string login, string password)
         {
             return db.Users.Include(u => u.Role)
                            .FirstOrDefault(u => u.Login == login && u.PasswordHash == password);
         }
 
-        public List<User> GetAllUsers()
-        {
-            return db.Users.Include(u => u.Role).ToList();
-        }
+        public List<Book> GetAllBooks() => db.Books.Include(b => b.Author).ToList();
 
-        public List<Book> GetAllBooks()
-        {
-            return db.Books.Include(b => b.Author).ToList();
-        }
         public void AddBook(Book book)
         {
             db.Books.Add(book);
@@ -40,55 +80,14 @@ namespace UP1.Services
             db.SaveChanges();
         }
 
-        // ====================== REVIEWS ======================
-        public List<Review> GetReviewsForBook(int bookId)
-        {
-            return db.Reviews.Include(r => r.User)
-                             .Where(r => r.BookId == bookId)
-                             .OrderByDescending(r => r.CreatedAt)
-                             .ToList();
-        }
-
-        public void AddReview(Review review)
-        {
-            db.Reviews.Add(review);
-            db.SaveChanges();
-        }
-
-        // ====================== USER LISTS ======================
         public List<Book> GetBooksOnShelf(int userId, string statusName)
         {
-            var status = db.ReadingStatuses.FirstOrDefault(s => s.Name == statusName);
-            if (status == null) return new List<Book>();
-
-            return db.UserBookLists
-                     .Where(ubl => ubl.UserId == userId && ubl.StatusId == status.Id)
-                     .Select(ubl => ubl.Book)
-                     .Include(b => b.Author)
-                     .ToList();
+            return db.Books.Include(b => b.Author).ToList();
         }
 
-        public void AddBookToShelf(int userId, int bookId, string statusName)
+        internal IEnumerable<object> GetAllUsers()
         {
-            var status = db.ReadingStatuses.FirstOrDefault(s => s.Name == statusName);
-            if (status == null) return;
-
-            // Удаляем со старых статусов
-            var existing = db.UserBookLists.Where(ubl => ubl.UserId == userId && ubl.BookId == bookId);
-            db.UserBookLists.RemoveRange(existing);
-
-            db.UserBookLists.Add(new UserBookList
-            {
-                UserId = userId,
-                BookId = bookId,
-                StatusId = status.Id
-            });
-
-            db.SaveChanges();
+            throw new NotImplementedException();
         }
-
-        public void SaveChanges() => db.SaveChanges();
-        // Дополнительные методы для совместимости со старым кодом
-        
     }
 }

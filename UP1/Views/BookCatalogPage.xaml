@@ -4,30 +4,28 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="1100"
+      d:DesignHeight="600" 
+      d:DesignWidth="1100"
       Title="BookCatalogPage">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
 
         <!-- Панель поиска, сортировки и фильтров -->
         <StackPanel Grid.Row="0" Margin="0,0,0,15">
             <StackPanel Orientation="Horizontal">
                 <!-- Поиск -->
-                <TextBox x:Name="txtSearch" Width="320" Height="38" 
-         Background="#3C3C3C" Foreground="White" 
-         BorderBrush="#555555" Margin="0,0,15,0"
-         VerticalContentAlignment="Center" FontSize="14"/>
+                <TextBox x:Name="txtSearch" Width="320" Height="38"
+                         Background="#3C3C3C" Foreground="White"
+                         BorderBrush="#555555" Margin="0,0,15,0"
+                         VerticalContentAlignment="Center" FontSize="14"/>
 
                 <!-- Сортировка -->
                 <ComboBox x:Name="cmbSort" Width="200" Height="38" 
-                  SelectionChanged=""
-                  Background="#3C3C3C" Foreground="White" Margin="0,0,15,0">
+                          Background="#3C3C3C" Foreground="White" Margin="0,0,15,0">
                     <ComboBoxItem Content="По названию (А-Я)" IsSelected="True"/>
                     <ComboBoxItem Content="По названию (Я-А)"/>
                     <ComboBoxItem Content="По оценке (высокая)"/>
@@ -41,7 +39,7 @@
         </StackPanel>
 
         <!-- Сетка книг -->
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <WrapPanel x:Name="booksPanel" ItemWidth="180" ItemHeight="280" 
                        Margin="10" HorizontalAlignment="Left"/>
         </ScrollViewer>

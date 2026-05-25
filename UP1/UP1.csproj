@@ -83,6 +83,7 @@
     </Compile>
     <Compile Include="Data\AppDbContext.cs" />
     <Compile Include="Data\Configuration.cs" />
+    <Compile Include="Data\DatabaseInitializer.cs" />
     <Compile Include="Models\Book.cs" />
     <Compile Include="Models\BookGenre.cs" />
     <Compile Include="Models\Complaint.cs" />

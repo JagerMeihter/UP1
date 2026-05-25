@@ -7,25 +7,42 @@ namespace UP1.Data
     {
         public AppDbContext() : base("ReadWriteDbConnection")
         {
-            // Автоматическое создание и обновление БД при запуске
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<AppDbContext, Configuration>());
+            // При каждом запуске пересоздаём базу (для разработки)
+            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<AppDbContext>());
         }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Book> Books { get; set; }
-        public DbSet<Genre> Genres { get; set; }
-        public DbSet<BookGenre> BookGenres { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<UserBookList> UserBookLists { get; set; }
         public DbSet<ReadingStatus> ReadingStatuses { get; set; }
-        public DbSet<Complaint> Complaints { get; set; }
-        public DbSet<ComplaintType> ComplaintTypes { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BookGenre>()
                 .HasKey(bg => new { bg.BookId, bg.GenreId });
+
+            // Отключаем каскадное удаление, чтобы избежать циклов
+            modelBuilder.Entity<Review>()
+                .HasRequired(r => r.Book)
+                .WithMany(b => b.Reviews)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Review>()
+                .HasRequired(r => r.User)
+                .WithMany()
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<UserBookList>()
+                .HasRequired(ubl => ubl.Book)
+                .WithMany()
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<UserBookList>()
+                .HasRequired(ubl => ubl.User)
+                .WithMany()
+                .WillCascadeOnDelete(false);
 
             base.OnModelCreating(modelBuilder);
         }
